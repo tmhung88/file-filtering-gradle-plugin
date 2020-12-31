@@ -15,7 +15,15 @@ dependencies {
     compileOnly(gradleApi())
 }
 
-configure<net.tmhung.plugin.GreetingPluginExtension> {
-    greeter = "Gradle"
-    message = "Hello World"
+tasks.register<net.tmhung.plugin.GreetingToFileTask>("greetToFile") {
+    destination = { project.extra["greetingFile"]!! }
 }
+
+tasks.register("sayGreeting") {
+    dependsOn("greetToFile")
+    doLast {
+        println(file(project.extra["greetingFile"]!!).readText())
+    }
+}
+
+extra["greetingFile"] = "$buildDir/hello.txt"
