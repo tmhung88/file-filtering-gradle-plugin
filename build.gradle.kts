@@ -15,4 +15,7 @@ dependencies {
     compileOnly(gradleApi())
 }
 
-
+configure<net.tmhung.plugin.GreetingPluginExtension> {
+    greeter = "Gradle"
+    message = "Hello World"
+}
