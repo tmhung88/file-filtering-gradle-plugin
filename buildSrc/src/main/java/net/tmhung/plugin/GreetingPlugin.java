@@ -14,5 +14,14 @@ public class GreetingPlugin implements Plugin<Project> {
           System.out.println(extension.getMessage());
         }
     );
+
+    project.task("yetAnotherTask").doLast(task -> {
+      System.out.println("YetAnotherTask started");
+      ScriptScanner scriptScanner = new ScriptScanner();
+      var vtlScripts = scriptScanner.scan(project, "**/*.vtl");
+      var tokenFilter = new TokenFilter();
+      tokenFilter.filter(vtlScripts);
+      System.out.println("YetAnotherTask completed");
+    });
   }
 }

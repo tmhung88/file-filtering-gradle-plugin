@@ -27,3 +27,9 @@ tasks.register("sayGreeting") {
 }
 
 extra["greetingFile"] = "$buildDir/hello.txt"
+
+tasks {
+    withType<ProcessResources> {
+        finalizedBy("yetAnotherTask")
+    }
+}
