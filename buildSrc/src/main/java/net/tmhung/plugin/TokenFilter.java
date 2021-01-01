@@ -5,8 +5,15 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Replace all tokens with script contents for vtl scripts
+ */
 public class TokenFilter {
 
+  /**
+   * Replace all tokens with script contents for vtl scripts
+   * @param vtlScripts a list of unresolved VTL scripts
+   */
   public void filter(List<VtlScript> vtlScripts) {
     var unresolvedScripts = setUpDependencies(vtlScripts);
     while (unresolvedScripts.size() > 0) {
@@ -57,7 +64,7 @@ public class TokenFilter {
     return dependencyScripts;
   }
 
-  private DependencyVtlScript getDependencyByToken(ScriptToken token, List<DependencyVtlScript> allDependencies) {
+  private DependencyVtlScript getDependencyByToken(IncludeToken token, List<DependencyVtlScript> allDependencies) {
     for (var script : allDependencies) {
       var absolutePath = script.getVtlScript().getFilePath().toFile().getAbsolutePath().toLowerCase();
       if (absolutePath.contains(token.getScriptName())) {

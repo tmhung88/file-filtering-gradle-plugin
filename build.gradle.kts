@@ -15,21 +15,8 @@ dependencies {
     compileOnly(gradleApi())
 }
 
-tasks.register<net.tmhung.plugin.GreetingToFileTask>("greetToFile") {
-    destination = { project.extra["greetingFile"]!! }
-}
-
-tasks.register("sayGreeting") {
-    dependsOn("greetToFile")
-    doLast {
-        println(file(project.extra["greetingFile"]!!).readText())
-    }
-}
-
-extra["greetingFile"] = "$buildDir/hello.txt"
-
 tasks {
     withType<ProcessResources> {
-        finalizedBy("yetAnotherTask")
+        finalizedBy("filterVelocityScripts")
     }
 }

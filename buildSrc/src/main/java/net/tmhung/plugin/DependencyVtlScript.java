@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Represent a VTL script which is being resolved
+ * A VTL script with its dependent scripts
  */
 public class DependencyVtlScript {
 
@@ -14,12 +14,15 @@ public class DependencyVtlScript {
 
   private final VtlScript vtlScript;
 
-  boolean resolved = false;
+  private boolean resolved = false;
 
   public DependencyVtlScript(VtlScript vtlScript) {
     this.vtlScript = vtlScript;
   }
 
+  /**
+   * Mark the script as resolved which means all of its dependencies resolved
+   */
   public DependencyVtlScript markResolved() {
     resolved = true;
     return this;
@@ -33,6 +36,9 @@ public class DependencyVtlScript {
     return new ArrayList<>(dependencies);
   }
 
+  /**
+   * Get a list of unresolved dependencies
+   */
   public List<DependencyVtlScript> getUnresolvedDependencies() {
     return dependencies.stream().filter(dependency -> !dependency.isResolved()).collect(Collectors.toList());
   }
@@ -42,7 +48,7 @@ public class DependencyVtlScript {
     return this;
   }
 
-  public List<ScriptToken> getDependencyTokens() {
+  public List<IncludeToken> getDependencyTokens() {
     return vtlScript.getTokens();
   }
 
@@ -50,7 +56,7 @@ public class DependencyVtlScript {
     return vtlScript;
   }
 
-  private VtlScript getDependencyByToken(ScriptToken token) {
+  private VtlScript getDependencyByToken(IncludeToken token) {
     for (var script : dependencies) {
       var absolutePath = script.vtlScript.getFilePath().toFile().getAbsolutePath().toLowerCase();
       if (absolutePath.contains(token.getScriptName())) {

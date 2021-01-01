@@ -11,6 +11,9 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import org.gradle.api.Project;
 
+/**
+ * Scan a project's directory with the given file pattern for vtl scripts
+ */
 public class ScriptScanner {
 
   public List<VtlScript> scan(Project project, String filePattern) {
@@ -23,10 +26,10 @@ public class ScriptScanner {
   public VtlScript analyze(Path filePath) {
     try {
       String fileContent = Files.readString(filePath);
-      Matcher matcher = ScriptToken.INCLUDED_PATTERN.matcher(fileContent);
-      List<ScriptToken> scriptTokens = new LinkedList<>();
+      Matcher matcher = IncludeToken.INCLUDED_PATTERN.matcher(fileContent);
+      List<IncludeToken> scriptTokens = new LinkedList<>();
       while (matcher.find()) {
-        scriptTokens.add(new ScriptToken(matcher.group()));
+        scriptTokens.add(new IncludeToken(matcher.group()));
       }
       return new VtlScript(filePath, scriptTokens);
     } catch (IOException e) {
