@@ -12,6 +12,7 @@ public class TokenFilter {
 
   /**
    * Replace all tokens with script contents for vtl scripts
+   *
    * @param vtlScripts a list of unresolved VTL scripts
    */
   public void filter(List<VtlScript> vtlScripts) {
@@ -44,7 +45,7 @@ public class TokenFilter {
       for (var scriptToken : vtlScript.getTokens()) {
         var dependencyScript = this.getDependencyByToken(scriptToken, script.getDependencies());
         var dependencyContent = Files.readString(dependencyScript.getVtlScript().getFilePath());
-        scriptContent = scriptContent.replaceAll(scriptToken.getToken(), dependencyContent);
+        scriptContent = scriptContent.replace(scriptToken.getToken(), dependencyContent);
       }
       Files.writeString(vtlScript.getFilePath(), scriptContent);
       script.markResolved();
@@ -65,12 +66,22 @@ public class TokenFilter {
   }
 
   private DependencyVtlScript getDependencyByToken(IncludeToken token, List<DependencyVtlScript> allDependencies) {
-    for (var script : allDependencies) {
-      var absolutePath = script.getVtlScript().getFilePath().toFile().getAbsolutePath().toLowerCase();
-      if (absolutePath.contains(token.getScriptName())) {
-        return script;
+    try {
+      for (var script : allDependencies) {
+        var absolutePath = normalizeFilePath(script.getVtlScript().getFilePath().toFile().getCanonicalPath());
+        var scriptName = normalizeFilePath(token.getScriptName());
+        if (absolutePath.contains(scriptName)) {
+          return script;
+        }
       }
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("Failed to get a dependency for %s", token.toString()));
     }
+
     throw new RuntimeException(String.format("No dependency found for %s", token.toString()));
+  }
+
+  private String normalizeFilePath(String filePath) {
+    return filePath.replace("\\", "/").toLowerCase().trim();
   }
 }
