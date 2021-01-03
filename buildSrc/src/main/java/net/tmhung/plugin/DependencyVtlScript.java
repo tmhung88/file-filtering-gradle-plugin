@@ -55,14 +55,4 @@ public class DependencyVtlScript {
   public VtlScript getVtlScript() {
     return vtlScript;
   }
-
-  private VtlScript getDependencyByToken(IncludeToken token) {
-    for (var script : dependencies) {
-      var absolutePath = script.vtlScript.getFilePath().toFile().getAbsolutePath().toLowerCase();
-      if (absolutePath.contains(token.getScriptName())) {
-        return script.vtlScript;
-      }
-    }
-    throw new RuntimeException(String.format("No dependency found for %s", token.toString()));
-  }
 }
